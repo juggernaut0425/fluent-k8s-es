@@ -22,6 +22,12 @@ kubectl -n kube-system create secret generic elasticsearch --from-literal=userna
 
 * [使用 concat 处理多行日志](https://github.com/juggernaut0425/fluent-k8s-es/blob/fc4bdcc87041b3f73c769b3eeae2d43e49f131cf/fluentd-es-configmap.yaml#L408)
 
+	需要根据自己打印日志的时间格式修改 
+	
+	```
+	multiline_start_regexp /\d{1,2}:\d{1,2}:\d{1,2}\.\d{3}/
+	``` 
+
 
 
 ## 参考
