@@ -408,7 +408,6 @@ data:
       @type concat
       @label @NORMAL
       key log
-      # 不加会有报错
       timeout_label @NORMAL
       multiline_start_regexp /\d{1,2}:\d{1,2}:\d{1,2}\.\d{3}/
       flush_interval 5
