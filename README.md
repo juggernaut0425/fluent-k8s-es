@@ -26,9 +26,15 @@ kubectl -n kube-system create secret generic elasticsearch --from-literal=userna
 	
 	```
 	multiline_start_regexp /\d{1,2}:\d{1,2}:\d{1,2}\.\d{3}/
-	``` 
+	
+	```
+	
+	
+* 首行的格式与 multiline_start_regexp不匹配时，多行失效，不会影响日志的采集
 
 
 
 ## 参考
 * [kubernetes-fluentd-elasticsearch](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch)
+* [fluent-plugin-concat](https://github.com/fluent-plugins-nursery/fluent-plugin-concat)
+* [k8s logging](https://kubernetes.io/docs/concepts/cluster-administration/logging/)
