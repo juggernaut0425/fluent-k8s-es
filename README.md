@@ -33,6 +33,8 @@ kubectl -n kube-system create secret generic elasticsearch --from-literal=userna
 * 首行的格式与 multiline_start_regexp不匹配时，多行失效，不会影响日志的采集
 
 	正则验证地址：http://rubular.com/
+	
+TODO：将 container 日志与其他拆分到不同的 index中
 
 
 

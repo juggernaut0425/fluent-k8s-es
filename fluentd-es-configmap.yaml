@@ -361,11 +361,11 @@ data:
       tag kernel
     </source>
 
-  forward.input.conf: |-
-    # Takes the messages sent over TCP
-    <source>
-      @type forward
-    </source>
+  # forward.input.conf: |-
+  #   # Takes the messages sent over TCP
+  #   <source>
+  #     @type forward
+  #   </source>
 
   # monitoring.conf: |-
   #   # Prometheus Exporter Plugin
@@ -423,8 +423,9 @@ data:
       <filter kubernetes.**>
         @type kubernetes_metadata
       </filter>
-      <match **>
-        @id elasticsearch
+      # container logs
+      <match kubernetes.**>
+        @id elasticsearch-containers
         @type elasticsearch
         @log_level info
         type_name fluentd
@@ -435,13 +436,13 @@ data:
         user "#{ENV['FLUENT_ELASTICSEARCH_USER']}"
         password "#{ENV['FLUENT_ELASTICSEARCH_PASSWORD']}"
         logstash_format true
-        logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX'] || 'logstash'}"
-        request_timeout 40s
+        logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_CONTAINER_PREFIX'] || 'k8s_containers'}"
+        request_timeout 10s
         reconnect_on_error true
         # with_transporter_log true
         <buffer>
           @type file
-          path /var/log/fluentd-buffers/kubernetes.system.buffer
+          path /var/log/fluentd-buffers/kubernetes.containers.buffer
           flush_mode interval
           retry_type exponential_backoff
           flush_thread_count 2
@@ -449,6 +450,35 @@ data:
           retry_forever
           retry_max_interval 30
           chunk_limit_size 10M
+          queue_limit_length 1000
+          overflow_action block
+        </buffer>
+      </match>
+      <match **>
+        @id elasticsearch-system
+        @type elasticsearch
+        @log_level info
+        type_name fluentd
+        include_tag_key true
+        # ruby code 
+        host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
+        port "#{ENV['FLUENT_ELASTICSEARCH_PORT'] || 9200}"
+        user "#{ENV['FLUENT_ELASTICSEARCH_USER']}"
+        password "#{ENV['FLUENT_ELASTICSEARCH_PASSWORD']}"
+        logstash_format true
+        logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_LOGSTASH_SYSTEM_PREFIX'] || 'k8s_system'}"
+        request_timeout 10s
+        reconnect_on_error true
+        <buffer>
+          @type file
+          path /var/log/fluentd-buffers/kubernetes.system.buffer
+          flush_mode interval
+          retry_type exponential_backoff
+          flush_thread_count 2
+          flush_interval 10s
+          retry_forever
+          retry_max_interval 30
+          chunk_limit_size 5M
           queue_limit_length 1000
           overflow_action block
         </buffer>
